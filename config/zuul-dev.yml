@@ -1,0 +1,41 @@
+spring:
+  application:
+    name: zuul
+    
+server:
+  port: 3001
+  
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka1:2001/eureka, http://eureka2:2002/eureka
+
+zuul:
+  retryable: true
+  sensitive-headers:  #设置 zuul 不过滤这些协议头:Cookie  Set-Cookie Authorization
+
+#  routes:
+#    item-service: /item-service/**
+#    user-service: /user-service/**
+#    order-service: /order-service/**
+    
+ribbon:     # 重试
+  ConnectTimeout: 1000  #1000
+  ReadTimeout: 1000   #1000
+  MaxAutoRetriesNextServer: 1   # ?!2
+  MaxAutoRetries: 1
+
+hystrix:    # 熔断/降级
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 500
+            
+management:  # 暴露 hystrix.stream 监控端点
+  endpoints:
+    web:
+      exposure:
+        include: hystrix.stream
+        
